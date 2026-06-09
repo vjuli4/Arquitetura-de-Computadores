@@ -1,216 +1,277 @@
 # TOTAL DE PIXELS: 128 colunas * 64 linhas = 8192 pixels
 # LARGURA DA TELA: 128 pixels * 4 bytes = 512 bytes por linha
+# +4 → próximo pixel horizontal
+# +512 → próxima linha
+# $25 → endereço inicial
+# $13 → tamanho/altura
 
 .text
 main:	
-	#endere�os base
+	#endereço base
 	lui $5, 0x1001
-	lui $6, 0x1001
-	lui $8, 0x1001
-	lui $7, 0x1001
-	addi $7, $7, 0x7C00	# In�cio da �ltima linha
 		
 	#cores
-	li $9, 0xfa5a9a		# paredes do labirinto (Rosa)
+	li $9, 0xEF0004 	#paredes do labirinto (VERMELHO)
 	li $19, 0xffff00	# PAC-MAN (Amarelo)
-	
-	#contadores a partir do endere�o
-	addi $10, $0, 0x100	
-	addi $11, $0, 0x1F00	
-	addi $12, $0, 0x3F	
-
-desenhar_borda_superior:
-	beq $10, $0, desenhar_borda_inferior
-	sw $9, 0($8)
-	addi $8, $8, 4		
-	addi $10, $10, -1	
-	j desenhar_borda_superior
-	
-desenhar_borda_inferior:
-	beq $11, 0x2000, desenhar_bordas_laterais 
-	sw $9, 0($7)
-	addi $7, $7, 4		
-	addi $11, $11, 1	
-	j desenhar_borda_inferior
-	
-desenhar_bordas_laterais:	
-	beq $12, $0 , cenario
-	sw $9, 0($6)		
-	addi $6, $6, 4
-	sw $9, 0($6)		
-	addi $6, $6, 500	
-	sw $9, 0($6)		
-	addi $6, $6, 4		
-	sw $9, 0($6)		
-	addi $6, $6, 4		
-	addi $12, $12, -1	
-	j desenhar_bordas_laterais
 
 cenario:
 	#testes pacman
-	addi $25, $5, 0x38f8	# endere�o. Linha 28, Pixel 62
+	addi $25, $5, 0x38f8	# endereço. Linha 28, Pixel 62
 	addi $13, $0, 3
-	jal desenhar_pacman
+	jal pacman
 	
-	addi $25, $5, 0x3880	# endere�o. Linha 28, Pixel 32
+	addi $25, $5, 0x387C	# endereço. Linha 28, Pixel 31
 	addi $13, $0, 3
-	jal desenhar_pacman
+	jal pacman
 	
-	addi $25, $5, 0x3974	# endere�o. Linha 28, Pixel 93
+	addi $25, $5, 0x4974	# endereço. Linha 36, Pixel 93
 	addi $13, $0, 3
-	jal desenhar_pacman
+	jal pacman
 	
-	addi $25, $5, 0x55d4	# endere�o. Linha 42, Pixel 117
+	addi $25, $5, 0x3E40	# endereço. Linha 31, Pixel 16
 	addi $13, $0, 3
-	jal desenhar_pacman
+	jal pacman
+	addi $25, $5, 0x4C40	# endereço. Linha 38, Pixel 16
+	addi $13, $0, 3
+	jal pacman
+	addi $25, $5, 0x5A40	# endereço. Linha 45, Pixel 16
+	addi $13, $0, 3
+	jal pacman
+	addi $25, $5, 0x68F8	# endereço. Linha 52, Pixel 62
+	addi $13, $0, 3
+	jal pacman
+	addi $25, $5, 0x5A9C	# endereço. Linha 45, Pixel 39
+	addi $13, $0, 3
+	jal pacman
+	addi $25, $5, 0x6840	# endereço. Linha 52, Pixel 16
+	addi $13, $0, 3
+	jal pacman
+	addi $25, $5, 0x2784	# endereço. Linha 19, Pixel 97
+	addi $13, $0, 3
+	jal pacman
+	addi $25, $5, 0x27D0	# endereço. Linha 19, Pixel 116
+	addi $13, $0, 3
+	jal pacman
 	
-	#====================================
-	#olhos da meia cara
-	# linha 7 coluna 8
-	# 7*512 + 8*4 = 3616 = 0xE20
-	addi $25, $5, 0xE20	
-	addi $13, $0, 9		# Altura
-	addi $15, $0, 436	# Largura interna
-	jal desenhar_2colunas
 	
-	#lateral da meia cara
-	# linha 7 coluna 15
-	# 7*512 + 15*4 = 3644 = 0xE3C
-	addi $25, $5, 0xE3C	
-	addi $13, $0, 14
-	addi $15, $0, 380
-	jal desenhar_2colunas
-	
-	#baixo da meia cara esquerda
-	# linha 21 coluna 8
-	# 21*512 + 8*4 = 10784 = 0x2A20
-	addi $25, $5, 0x2A20
-	addi $13, $0, 9
-	jal desenhar_linha_dupla
-	
-	#baixo da meia cara direita
-	# linha 21 coluna 110
-	# 21*512 + 110*4 = 11192 = 0x2BB8
-	addi $25, $5, 0x2BB8
-	addi $13, $0, 9
-	jal desenhar_linha_dupla
-	
+#====================================
+	#BORDA DO CENARIO
+	#laterais
+	addi $25, $5, 0x0000
+	addi $13, $0, 127
+	addi $15, $0, 504
+	jal duascolunas
+	#cima
+	addi $25, $5, 0x0000 
+	addi $13, $0, 128
+	jal linha_dupla
+	#baixo
+	addi $25, $5, 0x7C00 
+	addi $13, $0, 128
+	jal linha_dupla
+#================================
 	#CAIXOTE CIMA
 	# p1 linha superior
 	# linha 7 coluna 22
-	addi $25, $5, 0xE58
-	addi $13, $0, 39
-	jal desenhar_linha_dupla
+	addi $25, $5, 0xE98
+	addi $13, $0, 23
+	jal linha_dupla
 	
 	# p2 linha superior
-	# linha 7 coluna 22
-	addi $25, $5, 0xF08
-	addi $13, $0, 38
-	jal desenhar_linha_dupla
+	# linha 7 coluna 66
+	addi $25, $5, 0xF08 
+	addi $13, $0, 23
+	jal linha_dupla
 	
 	# p1 linha inferior
-	# linha 7 coluna 22
-	addi $25, $5, 0x2A58
-	addi $13, $0, 39
-	jal desenhar_linha_dupla
+	# linha 21 coluna 22
+	addi $25, $5, 0x2A98
+	addi $13, $0, 23
+	jal linha_dupla
 	
 	# p2 linha inferior
-	# linha 7 coluna 22
+	# linha 21 coluna 66
 	addi $25, $5, 0x2B08
-	addi $13, $0, 38
-	jal desenhar_linha_dupla
+	addi $13, $0, 23
+	jal linha_dupla
 	
 	#colunas
-	addi $25, $5, 0xE58
+	addi $25, $5, 0xE98
 	addi $13, $0, 14
-	addi $15, $0, 320
-	jal desenhar_2colunas
+	addi $15, $0, 196
+	jal duascolunas
 	
 	#linha do meio
-	addi $25, $5, 0x1C78	
-	addi $13, $0, 66
-	jal desenhar_linha_dupla
-	
+	# linha 14 coluna 30
+	addi $25, $5, 0x1CB8	
+	addi $13, $0, 36
+	jal linha_dupla
+#================================
 	#CAIXOTE MEIO
 	# p1 linha superior
-	# linha 7 coluna 22
+	# linha 28 coluna 36
 	addi $25, $5, 0x3890
 	addi $13, $0, 25
-	jal desenhar_linha_dupla
+	jal linha_dupla
 	
 	# p2 linha superior
-	# linha 7 coluna 22
+	# linha 28 coluna 58
 	addi $25, $5, 0x3908
 	addi $13, $0, 25
-	jal desenhar_linha_dupla
+	jal linha_dupla
 	
 	# linha inferior
-	# linha 7 coluna 22
-	addi $25, $5, 0x5290
-	addi $13, $0, 56
-	jal desenhar_linha_dupla
+	# linha 41 coluna 36
+	addi $25, $5, 0x548C
+	addi $13, $0, 57
+	jal linha_dupla
 	
 	#colunas
-	addi $25, $5, 0x3890
+	addi $25, $5, 0x388C
+	addi $13, $0, 15
+	addi $15, $0, 220
+	jal duascolunas
+#================================
+	#C
+	#CIMA ESQUERDA
+	addi $25, $5, 0x3840
 	addi $13, $0, 14
-	addi $15, $0, 216
-	jal desenhar_2colunas
+	jal linha_dupla
 	
-	#SORRISOS
-	#laterias esq
-	addi $25, $5, 0x3820	
-	addi $13, $0, 13	
-	addi $15, $0, 80	
-	jal desenhar_2colunas
-	#laterias dir
-	addi $25, $5, 0x3984	
-	addi $13, $0, 13	
-	addi $15, $0, 80	
-	jal desenhar_2colunas
-	#inferior esq
-	addi $25, $5, 0x4E20	
-	addi $13, $0, 20	
-	jal desenhar_linha_dupla
-	#inferior dir
-	addi $25, $5, 0x4F84	
-	addi $13, $0, 20	
-	jal desenhar_linha_dupla
-	#olhos esq
-	addi $25, $5, 0x383C	
-	addi $13, $0, 6		
-	addi $15, $0, 24	
-	jal desenhar_2colunas
-	#olhos dir
-	addi $25, $5, 0x39A0	
-	addi $13, $0, 6		
-	addi $15, $0, 24	
-	jal desenhar_2colunas
+	addi $25, $5, 0x3870
+	addi $13, $0, 14
+	jal coluna_dupla
 	
-	#H
-	addi $25, $5, 0x5D84	
-	addi $13, $0, 22
-	jal desenhar_linha_dupla
+	addi $25, $5, 0x5440
+	addi $13, $0, 14
+	jal linha_dupla
+	#BAIXO ESQUERDA
+	addi $25, $5, 0x4620
+	addi $13, $0, 14
+	jal linha_dupla
 	
-	addi $25, $5, 0x6F84	
-	addi $13, $0, 22	
-	jal desenhar_linha_dupla
+	addi $25, $5, 0x4820
+	addi $13, $0, 14
+	jal coluna_dupla
 	
-	addi $25, $5, 0x5C20
-	addi $13, $0, 11 #altura
-	addi $15, $0, 396 #largura
-	jal desenhar_2colunas	
-	#j
-	addi $25, $5, 0x6420	
-	addi $13, $0, 22
-	jal desenhar_linha_dupla
+	addi $25, $5, 0x6220
+	addi $13, $0, 14
+	jal linha_dupla
 	
-	addi $25, $5, 0x6470
+	#CIMA DIREITA
+	addi $25, $5, 0x39A4
+	addi $13, $0, 14
+	jal linha_dupla
+	
+	addi $25, $5, 0x39D4
+	addi $13, $0, 14
+	jal coluna_dupla
+	
+	addi $25, $5, 0x55A4
+	addi $13, $0, 14
+	jal linha_dupla
+	
+	#BAIXO DIREITA
+	addi $25, $5, 0x4784
+	addi $13, $0, 14
+	jal linha_dupla
+	
+	addi $25, $5, 0x4784
+	addi $13, $0, 14
+	jal coluna_dupla
+	
+	addi $25, $5, 0x6384
+	addi $13, $0, 14
+	jal linha_dupla
+#================================
+	#BAIXO MEIO
+	#Colunas lados
+	addi $25, $5, 0x6EB0
+	addi $13, $0, 8 #altura
+	addi $15, $0, 152 #largura
+	jal duascolunas
+	
+	#C esquerda
+	addi $25, $5, 0x6290
+	addi $13, $0, 18
+	jal linha_dupla
+	
+	addi $25, $5, 0x6290
+	addi $13, $0, 8 #altura
+	addi $15, $0, 72#largura
+	jal coluna_dupla
+	
+	addi $25, $5, 0x62D0
+	addi $13, $0, 8 #altura
+	addi $15, $0, 72#largura
+	jal coluna_dupla
+	
+	#Coluna meio
+	addi $25, $5, 0x56F8
+	addi $13, $0, 8
+	jal coluna_dupla
+	addi $25, $5, 0x70F8
 	addi $13, $0, 6
-	jal desenhar_coluna_dupla
+	jal coluna_dupla
 	
-	addi $25, $5, 0x6E60
+	#C direita
+	addi $25, $5, 0x6328
+	addi $13, $0, 18
+	jal linha_dupla
+	
+	addi $25, $5, 0x6328
+	addi $13, $0, 8 #altura
+	addi $15, $0, 72#largura
+	jal coluna_dupla
+	
+	addi $25, $5, 0x6368
+	addi $13, $0, 8 #altura
+	addi $15, $0, 72#largura
+	jal coluna_dupla
+	
+	#BAIXO LATERAIS
+	#ESQ
+	addi $25, $5, 0x7038
 	addi $13, $0, 6
-	jal desenhar_linha_dupla
+	jal coluna_dupla
+	
+	addi $25, $5, 0x7060
+	addi $13, $0, 14
+	jal linha_dupla
+	#DIR
+	addi $25, $5, 0x7168
+	addi $13, $0, 14
+	jal linha_dupla
+	
+	addi $25, $5, 0x71C0
+	addi $13, $0, 6
+	jal coluna_dupla
+	
+	#TRIANGULO VAZADO
+	#ESQ
+	addi $25, $5, 0x13A0
+	addi $13, $0, 10 #altura
+	jal d_esq
+	addi $25, $5, 0x13BC
+	addi $13, $0, 10 #altura
+	jal d_dir
+	addi $25, $5, 0x2D94
+	addi $13, $0, 14
+	jal linha
+	
+	#DIR
+	addi $25, $5, 0x1240
+	addi $13, $0, 10 #altura
+	jal d_esq
+	addi $25, $5, 0x125C
+	addi $13, $0, 10 #altura
+	jal d_dir
+	addi $25, $5, 0x2C34
+	addi $13, $0, 14
+	jal linha
+	
+	
+	
 	
 	j fim
 	
@@ -219,36 +280,43 @@ fim:
 	syscall
 	
 	
-# FUN��ES
+# FUNÇÕES
 # ==============================================================================
 
 # Desenha o bloco amarelo de teste do Pac-Man
-desenhar_pacman:
+pacman:
 	beq $13, $0, retornar
 	sw $19, 0($25)
 	sw $19, 4($25)
 	sw $19, 8($25)
-	addi $25, $25, 512	# pr�xima linha
+	addi $25, $25, 512	# próxima linha
 	addi $13, $13, -1
-	j desenhar_pacman
+	j pacman
 
-desenhar_coluna_dupla:
+coluna_dupla:
 	beq $13, $0, retornar
 	sw $9, 0($25)
 	sw $9, 4($25)
 	addi $25, $25, 512 #pula linha
 	addi $13, $13, -1
-	j desenhar_coluna_dupla
+	j coluna_dupla
 
-desenhar_linha_dupla:
+linha:
+	beq $13, $0, retornar
+	sw $9, 0($25)
+	addi $25, $25, 4 #pula pixel
+	addi $13, $13, -1
+	j linha
+	
+linha_dupla:
 	beq $13, $0, retornar
 	sw $9, 0($25)
 	sw $9, 512($25)
 	addi $25, $25, 4 #pula pixel
 	addi $13, $13, -1
-	j desenhar_linha_dupla
+	j linha_dupla
 
-desenhar_2colunas:
+duascolunas:
 	beq $13, $0, retornar
 	sw $9, 0($25)
 	sw $9, 4($25)
@@ -257,9 +325,23 @@ desenhar_2colunas:
 	sw $9, 4($24)
 	addi $25, $25, 512
 	addi $13, $13, -1
-	j desenhar_2colunas
+	j duascolunas
+#diagonal esquerda
+d_esq:
+	beq $13, $0, retornar
+	sw $9, 0($25)
+	#sw $9, 4($25)
+	addi $25, $25, 508   # 512 - 4
+	addi $13, $13, -1
+	j d_esq
+#diagonal direita
+d_dir:
+	beq $13, $0, retornar
+	sw $9, 0($25)
+	#sw $9, 4($25)
+	addi $25, $25, 516   # 512 + 4
+	addi $13, $13, -1
+	j d_dir
 
 retornar:	
 	jr $31
-
-	
