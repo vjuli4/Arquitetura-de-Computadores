@@ -1,63 +1,76 @@
 # TOTAL DE PIXELS: 128 colunas * 64 linhas = 8192 pixels
 # LARGURA DA TELA: 128 pixels * 4 bytes = 512 bytes por linha
-# +4 → próximo pixel horizontal
-# +512 → próxima linha
-# $25 → endereço inicial
-# $13 → tamanho/altura
+# +4 ? próximo pixel horizontal
+# +512 ? próxima linha
+# $25 ? endereço inicial
+# $13 ? tamanho/altura
 
 .text
 main:	
 	#endereço base
 	lui $5, 0x1001
-		
+	lui $8, 0x1001
+	lui $7, 0x1001
+	li $10, 32256
+	
 	#cores
 	li $9, 0xEF0004 	#paredes do labirinto (VERMELHO)
 	li $19, 0xffff00	# PAC-MAN (Amarelo)
-
-cenario:
-	#testes pacman
+	li $20, 0xFFFFFF
+	li $21 0x000000
+	
+for:  	beq $10, $0, nome
+      	sw $20, 0($8)
+     	addi $8, $8, 4
+      	addi $10, $10, -1
+      	j for
+      
+nome:
+	j nomes
+tempo:
+	jal timer
+	
+	li $10, 32256
+	# pinta de preto
+for1: 	beq $10, $0, cenario
+      	sw $21, 0($7)
+      	addi $7, $7, 4
+      	addi $10, $10, -1
+      	j for1
+      	
+cenario: #testes pacman
 	addi $25, $5, 0x38f8	# endereço. Linha 28, Pixel 62
-	addi $13, $0, 3
+	addi $13, $0, 6
 	jal pacman
 	
-	addi $25, $5, 0x387C	# endereço. Linha 28, Pixel 31
-	addi $13, $0, 3
+	addi $25, $5, 0x5B68	
+	addi $13, $0, 6
 	jal pacman
 	
-	addi $25, $5, 0x4974	# endereço. Linha 36, Pixel 93
-	addi $13, $0, 3
+	addi $25, $5, 0x3D78	
+	addi $13, $0, 6
 	jal pacman
 	
-	addi $25, $5, 0x3E40	# endereço. Linha 31, Pixel 16
-	addi $13, $0, 3
-	jal pacman
-	addi $25, $5, 0x4C40	# endereço. Linha 38, Pixel 16
-	addi $13, $0, 3
-	jal pacman
-	addi $25, $5, 0x5A40	# endereço. Linha 45, Pixel 16
-	addi $13, $0, 3
-	jal pacman
-	addi $25, $5, 0x68F8	# endereço. Linha 52, Pixel 62
-	addi $13, $0, 3
-	jal pacman
-	addi $25, $5, 0x5A9C	# endereço. Linha 45, Pixel 39
-	addi $13, $0, 3
-	jal pacman
-	addi $25, $5, 0x6840	# endereço. Linha 52, Pixel 16
-	addi $13, $0, 3
-	jal pacman
-	addi $25, $5, 0x2784	# endereço. Linha 19, Pixel 97
-	addi $13, $0, 3
-	jal pacman
-	addi $25, $5, 0x27D0	# endereço. Linha 19, Pixel 116
-	addi $13, $0, 3
+	addi $25, $5, 0x3C7C
+	addi $13, $0, 6
 	jal pacman
 	
+	addi $25, $5, 0x64A8
+	addi $13, $0, 6
+	jal pacman
+	
+	addi $25, $5, 0x6CC4
+	addi $13, $0, 6
+	jal pacman
+	
+	addi $25, $5, 0x6548
+	addi $13, $0, 6
+	jal pacman
 	
 #====================================
 	#BORDA DO CENARIO
 	#laterais
-	addi $25, $5, 0x0000
+	addi $25, $5, 0x000
 	addi $13, $0, 127
 	addi $15, $0, 504
 	jal duascolunas
@@ -70,209 +83,300 @@ cenario:
 	addi $13, $0, 128
 	jal linha_dupla
 #================================
-	#CAIXOTE CIMA
-	# p1 linha superior
-	# linha 7 coluna 22
-	addi $25, $5, 0xE98
-	addi $13, $0, 23
-	jal linha_dupla
-	
-	# p2 linha superior
-	# linha 7 coluna 66
-	addi $25, $5, 0xF08 
-	addi $13, $0, 23
-	jal linha_dupla
-	
-	# p1 linha inferior
-	# linha 21 coluna 22
-	addi $25, $5, 0x2A98
-	addi $13, $0, 23
-	jal linha_dupla
-	
-	# p2 linha inferior
-	# linha 21 coluna 66
-	addi $25, $5, 0x2B08
-	addi $13, $0, 23
-	jal linha_dupla
-	
-	#colunas
-	addi $25, $5, 0xE98
-	addi $13, $0, 14
-	addi $15, $0, 196
-	jal duascolunas
-	
-	#linha do meio
-	# linha 14 coluna 30
-	addi $25, $5, 0x1CB8	
-	addi $13, $0, 36
-	jal linha_dupla
-#================================
-	#CAIXOTE MEIO
-	# p1 linha superior
-	# linha 28 coluna 36
-	addi $25, $5, 0x3890
-	addi $13, $0, 25
-	jal linha_dupla
-	
-	# p2 linha superior
-	# linha 28 coluna 58
-	addi $25, $5, 0x3908
-	addi $13, $0, 25
-	jal linha_dupla
-	
-	# linha inferior
-	# linha 41 coluna 36
-	addi $25, $5, 0x548C
-	addi $13, $0, 57
-	jal linha_dupla
-	
-	#colunas
-	addi $25, $5, 0x388C
-	addi $13, $0, 15
-	addi $15, $0, 220
-	jal duascolunas
-#================================
-	#C
-	#CIMA ESQUERDA
-	addi $25, $5, 0x3840
-	addi $13, $0, 14
-	jal linha_dupla
-	
-	addi $25, $5, 0x3870
-	addi $13, $0, 14
+	##CIMA
+	#COLUNAS
+	addi $25, $5, 0x0298
+	addi $13, $0, 9
 	jal coluna_dupla
 	
-	addi $25, $5, 0x5440
-	addi $13, $0, 14
+	addi $25, $5, 0x0368
+	addi $13, $0, 9
+	jal coluna_dupla
+	#LINHA
+	addi $25, $5, 0x14C8
+	addi $13, $0, 30
 	jal linha_dupla
-	#BAIXO ESQUERDA
-	addi $25, $5, 0x4620
-	addi $13, $0, 14
-	jal linha_dupla
-	
-	addi $25, $5, 0x4820
-	addi $13, $0, 14
+	#L ESQUERDA
+	addi $25, $5, 0x182C
+	addi $13, $0, 12
 	jal coluna_dupla
 	
-	addi $25, $5, 0x6220
-	addi $13, $0, 14
+	addi $25, $5, 0x162C
+	addi $13, $0, 6
 	jal linha_dupla
-	
-	#CIMA DIREITA
-	addi $25, $5, 0x39A4
-	addi $13, $0, 14
-	jal linha_dupla
-	
-	addi $25, $5, 0x39D4
-	addi $13, $0, 14
+	#L DIREITA
+	addi $25, $5, 0x19D0
+	addi $13, $0, 12
 	jal coluna_dupla
 	
-	addi $25, $5, 0x55A4
-	addi $13, $0, 14
+	addi $25, $5, 0x17C0
+	addi $13, $0, 6
 	jal linha_dupla
 	
-	#BAIXO DIREITA
-	addi $25, $5, 0x4784
-	addi $13, $0, 14
+	
+	##MEIO
+	#ESQUERDA
+	#LINHA CIMA
+	addi $25, $5, 0x347C
+	addi $13, $0, 9
+	jal linha_dupla
+	#LINHA BAIXO
+	addi $25, $5, 0x4C7C
+	addi $13, $0, 9
 	jal linha_dupla
 	
-	addi $25, $5, 0x4784
-	addi $13, $0, 14
+	#DIREITA
+	#LINHA CIMA
+	addi $25, $5, 0x3568
+	addi $13, $0, 9
+	jal linha_dupla
+	#LINHA BAIXO
+	addi $25, $5, 0x4D68
+	addi $13, $0, 9
+	jal linha_dupla
+	
+	#CAIXOTE
+	addi $25, $5, 0x14C8
+	addi $13, $0, 30
+	jal linha_dupla
+	
+	addi $25, $5, 0x64C8
+	addi $13, $0, 30
+	jal linha_dupla
+	
+	addi $25, $5, 0x6B68
+	addi $13, $0, 9
+	jal duas_colunas
+	
+	
+	##BAIXO
+	#COLUNAS
+	addi $25, $5, 0x6A98
+	addi $13, $0, 9
 	jal coluna_dupla
 	
-	addi $25, $5, 0x6384
-	addi $13, $0, 14
-	jal linha_dupla
-#================================
-	#BAIXO MEIO
-	#Colunas lados
-	addi $25, $5, 0x6EB0
-	addi $13, $0, 8 #altura
-	addi $15, $0, 152 #largura
-	jal duascolunas
-	
-	#C esquerda
-	addi $25, $5, 0x6290
-	addi $13, $0, 18
+	addi $25, $5, 0x6B68
+	addi $13, $0, 9
+	jal coluna_dupla
+	#LINHA
+	addi $25, $5, 0x64C8
+	addi $13, $0, 30
 	jal linha_dupla
 	
-	addi $25, $5, 0x6290
-	addi $13, $0, 8 #altura
-	addi $15, $0, 72#largura
+	
+	#L DIREITA
+	addi $25, $5, 0x53D0
+	addi $13, $0, 12
 	jal coluna_dupla
 	
-	addi $25, $5, 0x62D0
-	addi $13, $0, 8 #altura
-	addi $15, $0, 72#largura
+	addi $25, $5, 0x6BC0
+	addi $13, $0, 6
+	jal linha_dupla
+	
+	
+	#L ESQUERDA
+	addi $25, $5, 0x522C
+	addi $13, $0, 12
 	jal coluna_dupla
 	
-	#Coluna meio
-	addi $25, $5, 0x56F8
+	addi $25, $5, 0x682C
+	addi $13, $0, 6
+	jal linha_dupla
+
+		
+	
+	
+	
+	
+	
+	
+	
+	j fim
+	
+nomes:
+	# J
+	addi $25, $5, 0x324C
+	addi $13, $0, 13
+	jal coluna
+	addi $25, $5, 0x3640
+	addi $13, $0, 3
+	jal coluna
+	addi $25, $5, 0x3644
+	addi $13, $0, 1
+	jal linha
+	addi $25, $5, 0x3648
+	addi $13, $0, 1
+	jal linha
+	addi $25, $5, 0x4c44
+	addi $13, $0, 2
+	jal linha
+	addi $25, $5, 0x4640
+	addi $13, $0, 3
+	jal coluna
+	
+	# u
+	addi $25, $5, 0x3E54
+	addi $13, $0, 7
+	jal coluna
+	addi $25, $5, 0x3E60
 	addi $13, $0, 8
-	jal coluna_dupla
-	addi $25, $5, 0x70F8
-	addi $13, $0, 6
-	jal coluna_dupla
-	
-	#C direita
-	addi $25, $5, 0x6328
-	addi $13, $0, 18
-	jal linha_dupla
-	
-	addi $25, $5, 0x6328
-	addi $13, $0, 8 #altura
-	addi $15, $0, 72#largura
-	jal coluna_dupla
-	
-	addi $25, $5, 0x6368
-	addi $13, $0, 8 #altura
-	addi $15, $0, 72#largura
-	jal coluna_dupla
-	
-	#BAIXO LATERAIS
-	#ESQ
-	addi $25, $5, 0x7038
-	addi $13, $0, 6
-	jal coluna_dupla
-	
-	addi $25, $5, 0x7060
-	addi $13, $0, 14
-	jal linha_dupla
-	#DIR
-	addi $25, $5, 0x7168
-	addi $13, $0, 14
-	jal linha_dupla
-	
-	addi $25, $5, 0x71C0
-	addi $13, $0, 6
-	jal coluna_dupla
-	
-	#TRIANGULO VAZADO
-	#ESQ
-	addi $25, $5, 0x13A0
-	addi $13, $0, 10 #altura
-	jal d_esq
-	addi $25, $5, 0x13BC
-	addi $13, $0, 10 #altura
-	jal d_dir
-	addi $25, $5, 0x2D94
-	addi $13, $0, 14
+	jal coluna
+	addi $25, $5, 0x4C54
+	addi $13, $0, 4
 	jal linha
-	
-	#DIR
-	addi $25, $5, 0x1240
-	addi $13, $0, 10 #altura
-	jal d_esq
-	addi $25, $5, 0x125C
-	addi $13, $0, 10 #altura
-	jal d_dir
-	addi $25, $5, 0x2C34
-	addi $13, $0, 14
+
+	# acento (ú)
+	addi $25, $5, 0x385C
+	addi $13, $0, 1
 	jal linha
+	addi $25, $5, 0x3660
+	addi $13, $0, 1
+	jal linha
+
+	# l
+	addi $25, $5, 0x326C
+	addi $13, $0, 13
+	jal coluna
+	addi $25, $5, 0x4C6C
+	addi $13, $0, 2
+	jal linha
+
+	# i
+	addi $25, $5, 0x3E78
+	addi $13, $0, 7
+	jal coluna
+	addi $25, $5, 0x3278
+	addi $13, $0, 1
+	jal linha
+	addi $25, $5, 0x4C78
+	addi $13, $0, 2
+	jal linha
+
+	# a (Júlia)
+	addi $25, $5, 0x3E84
+	addi $13, $0, 7
+	jal coluna
+	addi $25, $5, 0x3E90
+	addi $13, $0, 8
+	jal coluna
+	addi $25, $5, 0x3A88
+	addi $13, $0, 2
+	jal linha
+	addi $25, $5, 0x4C84
+	addi $13, $0, 5
+	jal linha
+
+#hadassa
+	# H
+	addi $25, $5, 0x32B0
+	addi $13, $0, 13
+	jal coluna
+	addi $25, $5, 0x32CC
+	addi $13, $0, 13
+	jal coluna
+	addi $25, $5, 0x46B4
+	addi $13, $0, 6
+	jal linha
+
+	# a (Hadassa - 1º)
+	addi $25, $5, 0x3ED8
+	addi $13, $0, 7
+	jal coluna
+	addi $25, $5, 0x3EE4
+	addi $13, $0, 8
+	jal coluna
+	addi $25, $5, 0x3ADC
+	addi $13, $0, 2
+	jal linha
+	addi $25, $5, 0x4CDC
+	addi $13, $0, 4
+	jal linha
+
+	# d
+	addi $25, $5, 0x3EF4
+	addi $13, $0, 7
+	jal coluna
+	addi $25, $5, 0x32FC
+	addi $13, $0, 13
+	jal coluna
+	addi $25, $5, 0x3AF4
+	addi $13, $0, 2
+	jal linha
+	addi $25, $5, 0x4CF4
+	addi $13, $0, 3
+	jal linha
+
+	# a (Hadassa - 2º)
+	addi $25, $5, 0x3F0C
+	addi $13, $0, 7
+	jal coluna
+	addi $25, $5, 0x3F18
+	addi $13, $0, 8
+	jal coluna
+	addi $25, $5, 0x3B10
+	addi $13, $0, 2
+	jal linha
+	addi $25, $5, 0x4D10
+	addi $13, $0, 4
+	jal linha
+
+	# s
+	addi $25, $5, 0x3F24
+	addi $13, $0, 4
+	jal coluna
+	addi $25, $5, 0x472C
+	addi $13, $0, 4
+	jal coluna
+	addi $25, $5, 0x3B24
+	addi $13, $0, 3
+	jal linha
+	addi $25, $5, 0x4324
+	addi $13, $0, 3
+	jal linha
+	addi $25, $5, 0x4B24
+	addi $13, $0, 3
+	jal linha
+	addi $25, $5, 0x4D2C
+	addi $13, $0, 2
+	jal linha
+
+	# s
+	addi $25, $5, 0x3F38
+	addi $13, $0, 4
+	jal coluna
+	addi $25, $5, 0x4740
+	addi $13, $0, 4
+	jal coluna
+	addi $25, $5, 0x3B38
+	addi $13, $0, 3
+	jal linha
+	addi $25, $5, 0x4338
+	addi $13, $0, 3
+	jal linha
+	addi $25, $5, 0x4B38
+	addi $13, $0, 3
+	jal linha
+	addi $25, $5, 0x4D40
+	addi $13, $0, 2
+	jal linha
+
+	# a (Hadassa - 3º)
+	addi $25, $5, 0x3F4C
+	addi $13, $0, 7
+	jal coluna
+	addi $25, $5, 0x3F58
+	addi $13, $0, 8
+	jal coluna
+	addi $25, $5, 0x3B50
+	addi $13, $0, 2
+	jal linha
+	addi $25, $5, 0x4D50
+	addi $13, $0, 4
+	jal linha
+
+	j tempo
 	
-	
-	
-	
+
 	j fim
 	
 fim:
@@ -289,6 +393,9 @@ pacman:
 	sw $19, 0($25)
 	sw $19, 4($25)
 	sw $19, 8($25)
+	sw $19, 12($25)
+	sw $19, 16($25)
+	sw $19, 20($25)
 	addi $25, $25, 512	# próxima linha
 	addi $13, $13, -1
 	j pacman
@@ -300,6 +407,14 @@ coluna_dupla:
 	addi $25, $25, 512 #pula linha
 	addi $13, $13, -1
 	j coluna_dupla
+	
+coluna:
+	beq $13, $0, retornar
+	sw $9, 0($25)
+	# sw $9, 4($25)
+	addi $25, $25, 512 #pula linha
+	addi $13, $13, -1
+	j coluna
 
 linha:
 	beq $13, $0, retornar
@@ -343,5 +458,10 @@ d_dir:
 	addi $13, $13, -1
 	j d_dir
 
-retornar:	
-	jr $31
+retornar:jr $31
+timer:  addi $25, $0, 5000
+fortim: beq $25, $0, fimtimer                  
+        nop
+        addi $25, $25, -1
+        j fortim
+fimtimer: jr $31
