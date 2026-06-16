@@ -112,7 +112,6 @@ cenario:
 	addi $25, $5, 0x136C
 	addi $13, $0, 3
 	jal linha
-	
 	#LINHA
 	addi $25, $5, 0x14C8
 	addi $13, $0, 30
@@ -125,8 +124,6 @@ cenario:
 	addi $13, $0, 3
 	addi $15, $0, 116
 	jal duascolunas
-	
-	
 	#L 
 	addi $25, $5, 0x182C
 	addi $13, $0, 12
@@ -145,9 +142,6 @@ cenario:
 	addi $25, $5, 0x17C8
 	addi $13, $0, 4
 	jal linha
-	
-	
-	
 	
 	addi $25, $5, 0x2E2C
 	addi $13, $0, 3
@@ -203,7 +197,6 @@ cenario:
 	addi $25, $5, 0x3578
 	addi $13, $0, 9
 	jal linha
-	
 	#LINHA BAIXO
 	addi $25, $5, 0x4B78
 	addi $13, $0, 9
@@ -212,8 +205,6 @@ cenario:
 	addi $25, $5, 0x5178
 	addi $13, $0, 9
 	jal linha
-	
-	
 	#CAIXOTE
 	addi $25, $5, 0x42C8
 	addi $13, $0, 30
@@ -240,8 +231,7 @@ cenario:
 	addi $25, $5, 0x2F40
 	addi $13, $0, 4
 	jal linha
-	
-	
+
 	
 	#######BAIXO
 	#COLUNAS
@@ -262,7 +252,6 @@ cenario:
 	addi $25, $5, 0x6B6C
 	addi $13, $0, 3
 	jal linha
-	
 	#LINHA
 	addi $25, $5, 0x6AC8
 	addi $13, $0, 30
@@ -276,11 +265,6 @@ cenario:
 	addi $13, $0, 3
 	addi $15, $0, 116
 	jal duascolunas
-	
-	
-	
-	
-	
 	#L 
 	addi $25, $5, 0x522C
 	addi $13, $0, 12
@@ -310,7 +294,6 @@ cenario:
 	
 # ========================================
 # CÓPIA DO CENÁRIO
-# ========================================
 copia_cenario:
 	lui $11, 0x1001       # Ponteiro de LEITURA 0x10010000
 	addi $12, $11, 32256  # Ponteiro de ESCRITA 0x10032256
@@ -359,7 +342,7 @@ pmf:	# pacman e fantasmas
 	li $10, 1		# Fantasma 4
 	
 	game_loop:
-	# --- MOVIMENTAÇÃO DO FANTASMA 1 ---
+	#movimentacão fantasma 1
 	move $25, $6           # Passa a posição atual para a rotina
 	move $17, $11           # Passa a direção atual
 	li $22, 0xFFC0CB        # Cor Rosa
@@ -367,7 +350,7 @@ pmf:	# pacman e fantasmas
 	move $6, $25           # Salva a nova posição atualizada
 	move $11, $24           # Salva a direção (que pode ter mudado se colidiu)
 
-	# --- MOVIMENTAÇÃO DO FANTASMA 2 ---
+	#movimentacão fantasma 2
 	move $25, $8		# Passa a posição atual
 	move $17, $12           # Passa a direção atual
 	li $22, 0xFF0000        # Cor Vermelha
@@ -375,7 +358,7 @@ pmf:	# pacman e fantasmas
 	move $8, $25           # Salva a nova posição
 	move $12, $24           # Salva a direção
 	
-	# --- MOVIMENTAÇÃO DO FANTASMA 3 ---
+	#movimentacão fantasma 3
 	move $25, $14           # Passa a posição atual
 	move $17, $16           # Passa a direção atual
 	li $22, 0x00FFFF        # Cor Ciano
@@ -383,7 +366,7 @@ pmf:	# pacman e fantasmas
 	move $14, $25           # Salva a nova posição
 	move $16, $24           # Salva a direção
 	
-	# --- MOVIMENTAÇÃO DO FANTASMA 4 ---
+	#movimentacão fantasma 4
 	move $25, $15           # Passa a posição atual
 	move $17, $10           # Passa a direção atual
 	li $22, 0xFFA500        # Cor Laranja
@@ -391,8 +374,8 @@ pmf:	# pacman e fantasmas
 	move $15, $25           # Salva a nova posição
 	move $10, $24           # Salva a direção
 
-	# --- CONTROLE DE TEMPO (FRAME RATE) ---
-	jal tim          # Espera um pouco para o olho humano conseguir acompanhar
+	#tempo
+	jal tim
 
 	j game_loop             # Repete o ciclo infinitamente
 
@@ -400,9 +383,8 @@ pmf:	# pacman e fantasmas
 	j fim
 	
 	
-# ==============================================================================
-# ROTINA GERAL DE ATUALIZAÇÃO DO FANTASMA (BORDAS REAIS + ANTICIPACAO DE 2PX)
-# ==============================================================================
+#==============================================================================
+#ATUALIZAÇÃO DO FANTASMA (BORDAS REAIS + ANTICIPACAO DE 2PX)
 atualizar_fantasma:
 	addi $sp, $sp, -4	
 	sw $31, 0($sp)        # Salva o endereço de retorno
@@ -843,7 +825,7 @@ d_dir:
 
 retornar:jr $31
 # time fantasma
-tim: 	addi $25, $0, 10000
+tim: 	addi $25, $0, 1000
 ft: 	beq $25, $0, fimt                  
         nop
         addi $25, $25, -1
